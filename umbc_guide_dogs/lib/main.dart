@@ -31,7 +31,7 @@ class HomeScreen extends StatelessWidget {
       context: context,
       barrierDismissible: true,
       builder: (context) => AlertDialog(
-        title: Text('What are you looking for?'),
+        title: Text('What are you looking for?', textAlign: TextAlign.center,),
         content: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Column(
@@ -63,9 +63,23 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(height: 20), 
 
                 if (selectedInfoText != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(selectedInfoText!),
+                  //displays text with scroll view
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 12.0),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.only(right: 16),
+                        child: Text(
+                          selectedInfoText!,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            height: 1.5,
+                            color: Colors.black87,
+                          ),
+                          softWrap: true,
+                        ),
+                      ),
+                    ),
                   ),
               ],
             );
@@ -138,41 +152,35 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-// return: string of building names for selected category
+/// returns list of service - building for specified category
 Future<String?> fetchBuildingsByCategory(String id) async {
-  final uri = Uri.parse('http://localhost:3000/helpmenu/$id'); 
+  //replace with server address after hosting
+  final uri = Uri.parse('http://localhost:3000/helpmenu/$id');
   try {
     final resp = await http.get(uri).timeout(const Duration(seconds: 8));
+
     if (resp.statusCode == 200) {
-      final decoded = jsonDecode(resp.body);
-      // maps name field of each object to a list
-      if (decoded is List) {
-        final names = decoded
-            .where((e) => e is Map && e.containsKey('Name'))
-            .map((e) => e['Name'].toString())
-            .toList();
-        if (names.isNotEmpty) return names.join('\n');
+      final List<dynamic> buildings = jsonDecode(resp.body);
+
+      // Build list of "Service - BuildingName" lines
+      List<String> lines = [];
+
+      // nested for loop that combines servce - building and appends to lines
+      for (var building in buildings) {
+        final String buildingName = building['buildingName'] ?? 'Unknown Building';
+        final List<dynamic> services = building['services'] ?? [];
+
+        for (var service in services) {
+          final String serviceKey = service['key'] ?? 'Unknown Service';
+          lines.add('$serviceKey - $buildingName');
+        }
       }
-      // If backend returns an object with keys that contain name fields:
-      if (decoded is Map) {
-        // Collect values where the key is "name" or the value is a string
-        final names = <String>[];
-        decoded.forEach((k, v) {
-          if (k == 'Name' && v != null) {
-            names.add(v.toString());
-          }
-          else if (v is Map && v.containsKey('Name')) {
-            names.add(v['Name'].toString());
-          }
-          else if (v is String && v.isNotEmpty) {
-            names.add(v);
-          }
-        });
-        if (names.isNotEmpty) return names.join(', ');
-      }
+
+      return lines.isEmpty ? null : lines.join('\n');
+    } else {
+      return null;
     }
   } catch (e) {
-    //nothin
+    return null;
   }
-  return null;
 }
