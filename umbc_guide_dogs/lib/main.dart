@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -96,21 +97,29 @@ class HomeScreen extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     final screenHeight = mediaQuery.size.height;
     final screenWidth = mediaQuery.size.width;
-    final primaryColor = Colors.blue.shade400;
+    final primaryColor = Colors.grey.shade800;
 
     return Container(
       color: primaryColor,
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
+            toolbarHeight: screenHeight * 0.08,
             backgroundColor: primaryColor,
-            title: const Text(
-              'UMBC GUIDE DOGS',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 24,
-                color: Colors.white,
-              ),
+            iconTheme: IconThemeData(color: Colors.white),
+            title: Row(
+              children: [
+                Image.asset(
+                  'images/UMBC-logo20.png',
+                  height: screenHeight * 0.07,     
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(width: 12),
+                Text('Umbc Guide Dogs', style: GoogleFonts.cinzel(fontSize: screenHeight * 0.04, 
+                color: Color(0xFFFFB81C), 
+                fontWeight: FontWeight.w500)),
+                //TextStyle(fontSize: screenHeight * 0.06, color: Color(0xFFFFB81C))
+              ],
             ),
           ),
 
