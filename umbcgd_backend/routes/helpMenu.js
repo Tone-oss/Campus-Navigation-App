@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose'); 
+const Building = require('../models/Building');
 
 // processes database and returns building with list of services in matching category
 function servicesByCategoryPipeline(category) {
@@ -10,14 +11,10 @@ function servicesByCategoryPipeline(category) {
 
     // unwind so each service-like key becomes a document
     { $unwind: "$rootAsArray" },
-
     // ignore known top-level fields that are not services
     { $match: { "rootAsArray.k": { $nin: ["_id","Building","Abbreviation","Floors","Description","__v"] } } },
-
-    // match where the service's Category array contains the requested category
     { $match: { "rootAsArray.v.Category": category } },
 
-    // group back to building level, collecting only matching services
     { $group: {
         _id: "$buildingId",
         buildingName: { $first: "$Building" },

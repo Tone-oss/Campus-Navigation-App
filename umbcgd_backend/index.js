@@ -3,7 +3,9 @@ const express = require('express')
 const helmet = require('helmet');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const Building = require('./models/Building');
 const helpRoutes = require('./routes/helpMenu');
+const searchRoute = require('./routes/search');
 
 const app = express()
 
@@ -12,7 +14,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use('/helpmenu', helpRoutes);
-
+app.use('/search', searchRoute);
 
 const uri = process.env.MONGODB_URI;
 mongoose.set('strictQuery', false);
@@ -27,15 +29,6 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     process.exit(1);
 });
 
-const BuildingSchema = new mongoose.Schema({
-  Building:    { type: String },
-  Abbreviation:{ type: String },
-  Floors:      { type: Number },
-  Description: { type: String }
-}, { strict: false });
-
-// add mongodb collection name to third field
-const Building = mongoose.model('Building', BuildingSchema, 'Buildings');
 
 
 app.listen(3000)

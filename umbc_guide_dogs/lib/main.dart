@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -95,21 +97,29 @@ class HomeScreen extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     final screenHeight = mediaQuery.size.height;
     final screenWidth = mediaQuery.size.width;
-    final primaryColor = Colors.blue.shade400;
+    final primaryColor = Colors.grey.shade800;
 
     return Container(
       color: primaryColor,
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(
+            toolbarHeight: screenHeight * 0.08,
             backgroundColor: primaryColor,
-            title: const Text(
-              'UMBC GUIDE DOGS',
-              style: TextStyle(
-                fontFamily: 'Arial',
-                fontSize: 24,
-                color: Colors.white,
-              ),
+            iconTheme: IconThemeData(color: Colors.white),
+            title: Row(
+              children: [
+                Image.asset(
+                  'images/UMBC-logo20.png',
+                  height: screenHeight * 0.07,     
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(width: 12),
+                Text('Umbc Guide Dogs', style: GoogleFonts.cinzel(fontSize: screenHeight * 0.04, 
+                color: Color(0xFFFFB81C), 
+                fontWeight: FontWeight.w500)),
+                //TextStyle(fontSize: screenHeight * 0.06, color: Color(0xFFFFB81C))
+              ],
             ),
           ),
 
@@ -131,9 +141,7 @@ class HomeScreen extends StatelessWidget {
                 SizedBox(width: screenWidth * 0.01),
 
                 Expanded(
-                  child: SearchBar(
-                    hintText: 'Search for locations, buildings, etc.',
-                  ),
+                  child: CustomSearchBar(),
                 ),
               ],
             ),
@@ -152,12 +160,61 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+class CustomSearchBar extends StatelessWidget {
+  const CustomSearchBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return TypeAheadField<String>(
+      // 1. Builder for the text field
+      builder: (context, controller, focusNode) {
+        return TextField(
+          controller: controller,
+          focusNode: focusNode,
+          decoration: InputDecoration(
+            hintText: 'Search for locations, buildings, etc.',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8.0),
+              borderSide: BorderSide(color: Colors.grey.shade800, width: 1.0),
+            ),
+            filled: true,
+            fillColor: Colors.white,
+            contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          ),
+        );
+      },
+
+      suggestionsCallback: (pattern) async {
+        return await search(pattern); // 
+      },
+
+      itemBuilder: (context, String suggestion) {
+        return ListTile(
+          title: Text(suggestion),
+        );
+      },
+
+      
+      onSelected: (String suggestion) {
+        // make call to generate route, sprint 3
+      },
+
+      
+      emptyBuilder: (context) => const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Text('No buildings found.'),
+      ),
+    );
+  }
+}
+
+
 /// returns list of service - building for specified category
 Future<String?> fetchBuildingsByCategory(String id) async {
   //replace with server address after hosting
   final uri = Uri.parse('http://localhost:3000/helpmenu/$id');
   try {
-    final resp = await http.get(uri).timeout(const Duration(seconds: 8));
+    final resp = await http.get(uri).timeout(const Duration(seconds: 5));
 
     if (resp.statusCode == 200) {
       final List<dynamic> buildings = jsonDecode(resp.body);
@@ -183,4 +240,31 @@ Future<String?> fetchBuildingsByCategory(String id) async {
   } catch (e) {
     return null;
   }
+}
+
+// returns list of building names that matches search term
+Future<List<String>> search(String term) async {
+  final uri = Uri.http('localhost:3000', '/search', {'q': term});
+
+  try {
+    final resp = await http.get(uri).timeout(const Duration(seconds: 5));
+
+    if (resp.statusCode == 200) {
+      final List<dynamic> results = jsonDecode(resp.body);
+      List<String> buildingNames = [];
+      
+      // loops thru json objects and append building name to list
+      for (var building in results) {
+        buildingNames.add(building['Building']);
+      }
+
+      return buildingNames;
+    } else {
+      return [];
+    }
+
+  } catch (e) {
+    return [];
+  }
+
 }
