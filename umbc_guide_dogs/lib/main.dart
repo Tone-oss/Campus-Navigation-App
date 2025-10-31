@@ -166,7 +166,6 @@ class CustomSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TypeAheadField<String>(
-      // 1. Builder for the text field
       builder: (context, controller, focusNode) {
         return TextField(
           controller: controller,
@@ -212,7 +211,7 @@ class CustomSearchBar extends StatelessWidget {
 /// returns list of service - building for specified category
 Future<String?> fetchBuildingsByCategory(String id) async {
   //replace with server address after hosting
-  final uri = Uri.parse('http://localhost:3000/helpmenu/$id');
+  final uri = Uri.parse('https://umbcgdserver.onrender.com/helpmenu/$id');
   try {
     final resp = await http.get(uri).timeout(const Duration(seconds: 5));
 
@@ -244,7 +243,7 @@ Future<String?> fetchBuildingsByCategory(String id) async {
 
 // returns list of building names that matches search term
 Future<List<String>> search(String term) async {
-  final uri = Uri.http('localhost:3000', '/search', {'q': term});
+  final uri = Uri.http('https://umbcgdserver.onrender.com', '/search', {'q': term});
 
   try {
     final resp = await http.get(uri).timeout(const Duration(seconds: 5));
