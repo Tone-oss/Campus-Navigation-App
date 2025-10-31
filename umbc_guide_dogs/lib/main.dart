@@ -243,7 +243,7 @@ Future<String?> fetchBuildingsByCategory(String id) async {
 
 // returns list of building names that matches search term
 Future<List<String>> search(String term) async {
-  final uri = Uri.http('https://umbcgdserver.onrender.com', '/search', {'q': term});
+  final uri = Uri.http('umbcgdserver.onrender.com', '/search', {'q': term});
 
   try {
     final resp = await http.get(uri).timeout(const Duration(seconds: 5));
