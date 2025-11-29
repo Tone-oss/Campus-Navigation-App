@@ -1,0 +1,24 @@
+@startuml
+set namespaceSeparator ::
+
+class "umbc_guide_dogs::main.dart::MyApp" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "umbc_guide_dogs::main.dart::MyApp"
+
+class "umbc_guide_dogs::main.dart::HomeScreen" {
+  -void _openHelpMenu()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "umbc_guide_dogs::main.dart::HomeScreen"
+
+class "umbc_guide_dogs::main.dart::CustomSearchBar" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "umbc_guide_dogs::main.dart::CustomSearchBar"
+
+
+@enduml
