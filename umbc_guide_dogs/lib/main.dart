@@ -16,13 +16,18 @@ class Building {
   final String name;
   final double long;
   final double lat;
-  
+  final double floors;
+  final String abbrev;
+  final String description;
 
   Building({
     required this.id,
     required this.name,
     required this.lat,
-    required this.long
+    required this.long,
+    required this.floors,
+    required this.abbrev,
+    required this.description
     
   });
 
@@ -32,8 +37,10 @@ class Building {
       id: json['_id'] as String,
       name: json['Building'] as String,
       lat: (json['Coordinates'][1] as num).toDouble(), 
-      long: (json['Coordinates'][0] as num).toDouble()
-      
+      long: (json['Coordinates'][0] as num).toDouble(),
+      floors: (json['Floors'] as num?)?.toDouble() ?? 0.0,
+      abbrev: json['Abbreviation'] as String? ?? 'N/A', 
+      description: json['Description'] as String? ?? 'No description availible.',
     );
   }
 }
@@ -263,6 +270,29 @@ class CustomSearchBar extends StatelessWidget {
     }
   }
 
+  void _openBuildingInfo(BuildContext context, Building building) {
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => AlertDialog(
+        content: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Building Name: ${building.name}'),
+                Text('Abbreviation: ${building.abbrev}'),
+                Text('Number of Floors: ${building.floors}'),
+                Text('Description: ${building.description}'),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return TypeAheadField<Building>(
@@ -302,6 +332,7 @@ class CustomSearchBar extends StatelessWidget {
         // mane why u no work
         // okay, so database gives coordinates [X, Y], but we needed to pass it in as [Y, X] for mapbox
         createRouteFromFlutter(suggestion.lat, suggestion.long);
+        _openBuildingInfo(context, suggestion);
       },
 
       // error prompt ig
