@@ -171,11 +171,12 @@ class HomeScreen extends StatelessWidget {
       color: primaryColor,
       child: SafeArea(
         child: Scaffold(
-
+          backgroundColor: Colors.transparent,
           // APP bar at the top
           appBar: AppBar(
             toolbarHeight: screenHeight * 0.08,
             backgroundColor: primaryColor,
+            leadingWidth: screenWidth * 0.04,
             iconTheme: const IconThemeData(color: Colors.white),
             title: Row(
               children: [
