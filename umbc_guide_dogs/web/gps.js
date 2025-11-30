@@ -92,6 +92,11 @@
       const end = endCoords;
       const url = `https://api.mapbox.com/directions/v5/mapbox/walking/${start[0]},${start[1]};${end[0]},${end[1]}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
 
+      // update the marker, during testing sometimes the gps finally gets real pos but doesnt redraw marker and it dangles
+      if (this.userMarker) {
+        this.userMarker.setLngLat(start);
+      }
+
       try {
         const response = await fetch(url);
         const data = await response.json();
