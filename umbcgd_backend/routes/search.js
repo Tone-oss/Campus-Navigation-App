@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
     // returns the top 5 closest building matches
     const results = await Building.find(
       { $text: { $search: query } },
-      { Building: 1, Coordinates: 1, Abbreviation: 1, Description: 1} 
+      { Building: 1, Coordinates: 1, Abbreviation: 1, Description: 1, Floors: 1} 
     )
     .sort({ score: { $meta: 'textScore' } }) 
     .limit(5)
