@@ -176,7 +176,7 @@ class HomeScreen extends StatelessWidget {
           appBar: AppBar(
             toolbarHeight: screenHeight * 0.08,
             backgroundColor: primaryColor,
-            leadingWidth: screenWidth * 0.04,
+            leadingWidth: 20 + screenWidth * 0.02, // trying to get the perfect spacing for mobile...
             iconTheme: const IconThemeData(color: Colors.white),
             title: Row(
               children: [
@@ -236,8 +236,20 @@ class HomeScreen extends StatelessWidget {
 
           // drawer for report menu (will we even do this?)
           drawer: const Drawer(
-            child: Center(
-              child: Text('add whatever additional features here'),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 20,
+                ),
+                Text('Fall 2025 - CMSC447 Semester Project'),
+                Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text('Bugs? Feedback? Contact us at:')
+                ),
+                
+                Text('bensonc2@umbc.edu\nanthons3@umbc.edu\nc260@umbc.edu')
+              ]
             ),
           ),
         ),
@@ -282,8 +294,8 @@ class CustomSearchBar extends StatelessWidget {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Building Name: ${building.name}'),
-                Text('Abbreviation: ${building.abbrev}'),
+                Text(building.name),
+                Text('Abbreviations: ${building.abbrev}'),
                 Text('Number of Floors: ${building.floors}'),
                 Text('Description: ${building.description}'),
               ],

@@ -54,6 +54,13 @@
 
           
           const coords = [pos.coords.longitude, pos.coords.latitude];
+
+          // apparently when gps is slow, map relies on fallback = ip basedl ocation which SUCKS. so ignore
+          if (pos.coords.accuracy > 100) {
+            console.log("position inaccurate, ignoring")
+            return;
+          }
+
           this.userLocation = coords;
           console.log("Position update:", coords);
 
@@ -69,7 +76,7 @@
           }
         },
         (error) => console.error("Error getting location:", error.message),
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 1000 }
       );
     }
 
